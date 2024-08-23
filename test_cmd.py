@@ -27,7 +27,7 @@ def current_driver():
 
     current_drive = drive.drive_split(os.getcwd())[0]
 
-    return  current_drive
+    return current_drive
 
 class TestCMD:
 

@@ -1,0 +1,27 @@
+cd [directory_path]
+===================
+
+Linux/Mac (Terminal)
+====================
+cd /path/to/directory     # Absolute path
+cd folder_name            # Relative path (subdirectory)
+cd ..                     # Go up one directory
+cd ~                      # Go to home directory
+cd                        # Go to home directory
+cd -                      # Go to previous directory
+cd /                      # Go to root directory
+
+Windows (Command Prompt)
+========================
+cd C:\Path\To\Directory  # Absolute path
+cd folder_name           # Relative path (subdirectory)
+cd ..                    # Go up one directory
+cd \                     # Go to root of current drive
+cd /d D:\Path            # Change drive and directory
+
+Path Shortcuts
+==============
+. = Current directory
+.. = Parent directory
+~ = Home directory
+- = Previous directory

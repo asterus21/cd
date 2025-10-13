@@ -2,6 +2,7 @@ import os
 import subprocess
 import pytest
 
+
 # arrange
 @pytest.fixture
 def get_path():
@@ -34,15 +35,11 @@ def test_up(get_path: str) -> bool:
     assert stdout_as_str == os.path.dirname(get_path), 'Directories are not equal.'
 
 
-# print([i for i in next(os.walk(os.getcwd()))[1]])
-# print([f.path for f in os.scandir(os.getcwd()) if f.is_dir()])
-
-
 def test_down(get_path: str) -> bool:
 
     """Сhecks whether we go one level down."""
 
-    etalons_data = [f.path for f in os.scandir(get_path) if f.is_dir() and not 'System Volume Information']
+    etalons_data = [f.path for f in os.scandir(get_path) if f.is_dir()]
 
     test_data = []
 
@@ -62,9 +59,6 @@ def test_down(get_path: str) -> bool:
 
     # assert
     assert etalons_data == test_data, 'Directories are not equal.'
-
-
-test_down(os.getcwd())
 
 
 def test_current(get_path: str) -> bool:

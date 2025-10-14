@@ -16,6 +16,30 @@ def test_folder(get_path: str) -> bool:
     assert os.path.isdir(get_path), 'The path is not a directory.'
 
 
+def test_drive(get_path: str) -> bool:
+
+    """Check wether we change the drive"""
+
+    drives = os.listdrives()
+    test = []
+
+    for drive in drives:
+        # act
+        subprocess_run = subprocess.run(
+            f'cd /d {drive} && cd',
+            cwd=get_path,
+            check=False,
+            shell=True,
+            capture_output=True
+        )
+
+        stdout_as_str = subprocess_run.stdout.decode("utf-8")[:-2]                  # remove \r and \n
+        test.append(stdout_as_str)
+
+    # assert
+    assert drives == test
+
+
 def test_root(get_path: str) -> bool:
 
     """Check wether we go back to the root."""
@@ -58,11 +82,10 @@ def test_down(get_path: str) -> bool:
 
     """Сhecks whether we go one level down."""
 
-    etalons_data = [f.path for f in os.scandir(get_path) if f.is_dir()]
+    folders = [f.path for f in os.scandir(get_path) if f.is_dir()]
+    test = []
 
-    test_data = []
-
-    for folder in etalons_data:
+    for folder in folders:
 
         # act
         subprocess_run = subprocess.run(
@@ -74,10 +97,10 @@ def test_down(get_path: str) -> bool:
             )
         
         stdout_as_str = subprocess_run.stdout.decode("utf-8")[:-2]              # remove \r and \n    
-        test_data.append(stdout_as_str)
+        test.append(stdout_as_str)
 
     # assert
-    assert etalons_data == test_data, 'Directories are not equal.'
+    assert folders == test, 'Directories are not equal.'
 
 
 def test_current(get_path: str) -> bool:

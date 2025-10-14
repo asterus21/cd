@@ -16,6 +16,25 @@ def test_folder(get_path: str) -> bool:
     assert os.path.isdir(get_path), 'The path is not a directory.'
 
 
+def test_current(get_path: str) -> bool:
+
+    """Сhecks whether we stay on the same level."""
+
+    command = 'cd'
+    # act
+    subprocess_run = subprocess.run(
+        command,
+        cwd=get_path,
+        check=True,
+        shell=True,
+        capture_output=True
+        )
+    
+    stdout_as_str = subprocess_run.stdout.decode("utf-8")[:-2]                  # remove \r and \n
+    # assert
+    assert stdout_as_str == os.getcwd(), 'Directories are not equal.'
+
+
 def test_drive(get_path: str) -> bool:
 
     """Check wether we change the drive"""
@@ -33,7 +52,7 @@ def test_drive(get_path: str) -> bool:
             capture_output=True
         )
 
-        stdout_as_str = subprocess_run.stdout.decode("utf-8")[:-2]                  # remove \r and \n
+        stdout_as_str = subprocess_run.stdout.decode("utf-8")[:-2]              # remove \r and \n
         test.append(stdout_as_str)
 
     # assert
@@ -101,22 +120,3 @@ def test_down(get_path: str) -> bool:
 
     # assert
     assert folders == test, 'Directories are not equal.'
-
-
-def test_current(get_path: str) -> bool:
-
-    """Сhecks whether we stay on the same level."""
-
-    command = 'cd'
-    # act
-    subprocess_run = subprocess.run(
-        command,
-        cwd=get_path,
-        check=True,
-        shell=True,
-        capture_output=True
-        )
-    
-    stdout_as_str = subprocess_run.stdout.decode("utf-8")[:-2]                  # remove \r and \n
-    # assert
-    assert stdout_as_str == os.getcwd(), 'Directories are not equal.'

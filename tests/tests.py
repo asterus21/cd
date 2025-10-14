@@ -16,6 +16,25 @@ def test_folder(get_path: str) -> bool:
     assert os.path.isdir(get_path), 'The path is not a directory.'
 
 
+def test_root(get_path: str) -> bool:
+
+    """Check wether we go back to the root."""
+
+    command = 'cd \ && cd'
+    # act
+    subprocess_run = subprocess.run(
+        command,
+        cwd=get_path,
+        check=False,
+        shell=True,
+        capture_output=True
+    )
+
+    stdout_as_str = subprocess_run.stdout.decode("utf-8")[:-2]                  # remove \r and \n
+    # assert
+    assert stdout_as_str == os.getcwd()[0:3]
+
+
 def test_up(get_path: str) -> bool:
 
     """Сhecks whether we go one level up."""

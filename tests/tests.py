@@ -4,119 +4,86 @@ import pytest
 
 
 # arrange
-@pytest.fixture
+@pytest.fixture(name="path")
 def get_path():
+
+    """Returns the current working directory."""
+
     return os.getcwd()
 
 
-def test_folder(get_path: str) -> bool:
+def execute_command(command: str, path: str):
 
-    """Сhecks whether the entered path is a folder."""
-    # assert
-    assert os.path.isdir(get_path), 'The path is not a directory.'
+    """Executes the passed command to run."""
 
-
-def test_current(get_path: str) -> bool:
-
-    """Сhecks whether we stay on the same level."""
-
-    command = 'cd'
-    # act
     subprocess_run = subprocess.run(
         command,
-        cwd=get_path,
-        check=True,
+        cwd=path,
+        check=False,
         shell=True,
         capture_output=True
         )
-    
-    stdout_as_str = subprocess_run.stdout.decode("utf-8")[:-2]                  # remove \r and \n
+
+    return subprocess_run.stdout.decode("utf-8").strip()
+
+
+def test_folder(path: str):
+
+    """Сhecks whether the entered path is a folder."""
     # assert
-    assert stdout_as_str == os.getcwd(), 'Directories are not equal.'
+    assert os.path.isdir(path), 'The path is not a directory.'
 
 
-def test_drive(get_path: str) -> bool:
+def test_current(path: str):
+
+    """Сhecks whether we stay on the same level."""
+    # act
+    result = execute_command('cd', path)
+    # assert
+    assert result == os.getcwd(), 'Directories are not equal.'
+
+
+def test_drive(path: str):
 
     """Check wether we change the drive"""
 
     drives = os.listdrives()
-    test = []
-
-    for drive in drives:
-        # act
-        subprocess_run = subprocess.run(
-            f'cd /d {drive} && cd',
-            cwd=get_path,
-            check=False,
-            shell=True,
-            capture_output=True
-        )
-
-        stdout_as_str = subprocess_run.stdout.decode("utf-8")[:-2]              # remove \r and \n
-        test.append(stdout_as_str)
-
-    # assert
-    assert drives == test
-
-
-def test_root(get_path: str) -> bool:
-
-    """Check wether we go back to the root."""
-
-    command = 'cd \ && cd'
+    result = []
     # act
-    subprocess_run = subprocess.run(
-        command,
-        cwd=get_path,
-        check=False,
-        shell=True,
-        capture_output=True
-    )
+    for drive in drives:        
+        result.append(execute_command(f'cd /d {drive} && cd', path))
 
-    stdout_as_str = subprocess_run.stdout.decode("utf-8")[:-2]                  # remove \r and \n
     # assert
-    assert stdout_as_str == os.getcwd()[0:3]
+    assert drives == result
 
 
-def test_up(get_path: str) -> bool:
+def test_root(path: str):
+
+    """Check wether we go back to the root of the current directory."""
+    # act
+    result = execute_command('cd \ && cd', path)
+    # assert
+    assert result == os.getcwd()[0:3]
+
+
+def test_up(path: str):
 
     """Сhecks whether we go one level up."""
-
-    command = 'cd .. && cd'
     # act
-    subprocess_run = subprocess.run(
-        command,
-        cwd=get_path,
-        check=False,
-        shell=True,
-        capture_output=True
-        )
-    
-    stdout_as_str = subprocess_run.stdout.decode("utf-8")[:-2]                  # remove \r and \n
+    result = execute_command('cd .. && cd', path)
     # assert
-    assert stdout_as_str == os.path.dirname(get_path), 'Directories are not equal.'
+    assert result == os.path.dirname(path), 'Directories are not equal.'
 
 
-def test_down(get_path: str) -> bool:
+def test_down(path: str):
 
     """Сhecks whether we go one level down."""
 
-    folders = [f.path for f in os.scandir(get_path) if f.is_dir()]
-    test = []
-
+    folders = [f.path for f in os.scandir(path) if f.is_dir()]
+    result = []
+    # act
     for folder in folders:
-
-        # act
-        subprocess_run = subprocess.run(
-            f'cd {folder} && cd',
-            cwd=get_path,
-            check=False,
-            shell=True,
-            capture_output=True
-            )
-        
-        stdout_as_str = subprocess_run.stdout.decode("utf-8")[:-2]              # remove \r and \n    
-        test.append(stdout_as_str)
+        result.append(execute_command(f'cd {folder} && cd', path))
 
     # assert
-    assert folders == test, 'Directories are not equal.'
+    assert folders == result, 'Directories are not equal.'

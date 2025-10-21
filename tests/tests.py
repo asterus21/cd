@@ -24,7 +24,7 @@ def execute_command(command: str, path: str):
         capture_output=True
         )
 
-    return subprocess_run.stdout.decode("utf-8").strip()
+    return subprocess_run.stdout.decode("utf-8").strip() # the result is stripped due t \r and \n
 
 
 def test_folder(path: str):
@@ -43,6 +43,15 @@ def test_current(path: str):
     assert result == os.getcwd(), 'Directories are not equal.'
 
 
+# def test_current(path: str):
+#
+#     """Сhecks whether we stay on the same level."""
+#     # act
+#     result = execute_command('cd . && cd', path)
+#     # assert
+#     assert result == os.getcwd(), 'Directories are not equal.'
+
+
 def test_drive(path: str):
 
     """Check wether we change the drive"""
@@ -50,7 +59,7 @@ def test_drive(path: str):
     drives = os.listdrives()
     result = []
     # act
-    for drive in drives:        
+    for drive in drives:
         result.append(execute_command(f'cd /d {drive} && cd', path))
 
     # assert
@@ -61,7 +70,7 @@ def test_root(path: str):
 
     """Check wether we go back to the root of the current directory."""
     # act
-    result = execute_command('cd \ && cd', path)
+    result = execute_command(r'cd \ && cd', path) # 'r-string' avoids a single backslash warning
     # assert
     assert result == os.getcwd()[0:3]
 

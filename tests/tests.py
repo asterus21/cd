@@ -21,10 +21,11 @@ def execute_command(command: str, path: str):
         cwd=path,
         check=False,
         shell=True,
-        capture_output=True
+        capture_output=True,
+        text=True
         )
 
-    return subprocess_run.stdout.decode("utf-8").strip() # the result is stripped due t \r and \n
+    return subprocess_run.stdout.strip() # the result is stripped due t \r and \n
 
 
 def test_folder(path: str):
